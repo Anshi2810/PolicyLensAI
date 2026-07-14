@@ -10,6 +10,7 @@ import Eligibility from './pages/Eligibility';
 import Simulation from './pages/Simulation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Measured from './pages/Measured';
 import { API_BASE } from './lib/utils';
 
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +47,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/measured" element={<Measured />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
