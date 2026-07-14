@@ -57,7 +57,7 @@ export default function Layout() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -68,59 +68,84 @@ export default function Layout() {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         {/* Logo */}
-        <div className="p-6 border-b border-surface-200/50 dark:border-surface-700/50">
+        <div className="p-6 border-b border-slate-200/40 dark:border-slate-800/40">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
+            <motion.div 
+              whileHover={{ rotate: 360, scale: 1.05 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-teal-400 flex items-center justify-center shadow-glow cursor-pointer"
+            >
               <Shield className="w-5 h-5 text-white" />
-            </div>
+            </motion.div>
             <div>
-              <h1 className="text-lg font-bold gradient-text">PolicyLens AI</h1>
-              <p className="text-[11px] text-surface-400 dark:text-surface-500 font-medium uppercase tracking-wider">Governance Intelligence</p>
+              <h1 className="text-lg font-bold font-heading bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-500 bg-clip-text text-transparent">PolicyLens AI</h1>
+              <p className="text-[10px] text-surface-400 dark:text-surface-500 font-semibold uppercase tracking-wider">Governance Intelligence</p>
             </div>
           </div>
         </div>
 
         {/* Role Display */}
-        <div className="px-4 pt-4">
-          <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium bg-primary-50 dark:bg-primary-900/20 w-fit mx-auto border border-primary-100 dark:border-primary-800">
-            {mode === 'admin' ? <Shield className="w-4 h-4 text-primary-600" /> : <Users className="w-4 h-4 text-accent-600" />}
-            <span className={mode === 'admin' ? 'text-primary-600 dark:text-primary-400' : 'text-accent-600 dark:text-accent-400'}>
-              {mode === 'admin' ? t("authority_portal") : t("citizen_portal")}
-            </span>
+        <div className="px-6 pt-5">
+          <div className="flex items-center gap-2 py-2 px-3.5 rounded-xl text-sm font-semibold bg-indigo-50/50 dark:bg-indigo-950/20 w-full border border-indigo-100/50 dark:border-indigo-900/30">
+            {mode === 'admin' ? (
+              <>
+                <Shield className="w-4 h-4 text-indigo-500" />
+                <span className="text-indigo-600 dark:text-indigo-400">
+                  {t("authority_portal") || "Authority Portal"}
+                </span>
+              </>
+            ) : (
+              <>
+                <Users className="w-4 h-4 text-teal-500" />
+                <span className="text-teal-600 dark:text-teal-400">
+                  {t("citizen_portal") || "Citizen Portal"}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          <p className="text-[11px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider mb-3 px-3">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 mt-4">
+          <p className="text-[10px] font-bold text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-3 px-3">
             {mode === 'admin' ? 'Administration' : 'Citizen Services'}
           </p>
-          {links.map(link => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                  isActive
-                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 shadow-sm'
-                    : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-200'
-                }`
-              }
-            >
-              <link.icon className="w-5 h-5 transition-transform group-hover:scale-110" />
-              {t(link.label.toLowerCase().replace(' ', '_')) || link.label}
-            </NavLink>
-          ))}
+          {links.map(link => {
+            const isActive = location.pathname === link.to;
+            return (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={() => setSidebarOpen(false)}
+                className={
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group relative ${
+                    isActive
+                      ? 'text-indigo-600 dark:text-indigo-400 font-bold'
+                      : 'text-surface-600 dark:text-surface-400 hover:bg-slate-100/40 dark:hover:bg-slate-900/40 hover:text-surface-900 dark:hover:text-surface-200'
+                  }`
+                }
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeSidebarTab"
+                    className="absolute inset-0 bg-indigo-50/60 dark:bg-indigo-950/25 border-l-4 border-indigo-500 dark:border-indigo-400 rounded-xl -z-10"
+                    transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                  />
+                )}
+                <link.icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${isActive ? 'text-indigo-500' : 'text-slate-400 dark:text-slate-500'}`} />
+                <span>{t(link.label.toLowerCase().replace(' ', '_')) || link.label}</span>
+              </NavLink>
+            );
+          })}
         </nav>
 
         {/* Sidebar footer */}
-        <div className="p-4 border-t border-surface-200/50 dark:border-surface-700/50">
-          <div className="glass-card p-3 bg-gradient-to-br from-primary-500/5 to-accent-500/5 dark:from-primary-500/10 dark:to-accent-500/10">
-            <p className="text-xs font-medium text-surface-500 dark:text-surface-400">{t("system_status")}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{t("active")} — Monitoring</p>
+        <div className="p-4 border-t border-slate-200/40 dark:border-slate-800/40">
+          <div className="glass-card p-4 bg-gradient-to-br from-indigo-500/5 to-teal-500/5 dark:from-indigo-500/10 dark:to-teal-500/10 rounded-xl border border-indigo-500/10">
+            <p className="text-xs font-semibold text-surface-400 dark:text-surface-500">{t("system_status") || "System Status"}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{t("active") || "Active"} — Monitoring</p>
             </div>
           </div>
         </div>
@@ -135,11 +160,11 @@ export default function Layout() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white overflow-hidden"
+              className="bg-gradient-to-r from-rose-500 to-orange-500 text-white overflow-hidden shadow-md"
             >
-              <div className="flex items-center justify-between px-4 py-2">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <AlertTriangle className="w-4 h-4 animate-pulse" />
+              <div className="flex items-center justify-between px-6 py-2.5">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <AlertTriangle className="w-4 h-4 animate-bounce" />
                   <span>⚠ High-risk alert: Moradabad district shows 30% higher anomaly rate than state average</span>
                 </div>
                 <button onClick={() => setShowAlert(false)} className="hover:bg-white/20 rounded p-1 transition">
@@ -151,55 +176,61 @@ export default function Layout() {
         </AnimatePresence>
 
         {/* Top bar */}
-        <header className="h-16 flex items-center justify-between px-4 md:px-6 border-b border-surface-200/50 dark:border-surface-700/50 bg-white/60 dark:bg-surface-900/60 backdrop-blur-lg z-30">
+        <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200/40 dark:border-slate-800/40 bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl z-30">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition"
+              className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <div>
-              <h2 className="text-sm font-semibold text-surface-900 dark:text-surface-100">
+              <h2 className="text-base font-bold font-heading text-surface-900 dark:text-surface-100">
                 {t(links.find(l => l.to === location.pathname)?.label.toLowerCase().replace(' ', '_')) || 'PolicyLens AI'}
               </h2>
-              <p className="text-xs text-surface-400 dark:text-surface-500">Uttar Pradesh Governance Monitor</p>
+              <p className="text-[10px] text-surface-400 dark:text-surface-500 font-medium">Uttar Pradesh Governance Monitor</p>
             </div>
           </div>
           {/* Right Actions */}
-          <div className="flex items-center gap-1 sm:gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             {/* Language Switcher */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en')}
-              className="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700 transition-all font-semibold flex items-center gap-2 text-sm shadow-sm"
-              title={t("language")}
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-surface-600 dark:text-surface-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all font-bold flex items-center gap-2 text-xs shadow-sm border border-slate-200/40 dark:border-slate-800/30"
+              title={t("language") || "Language"}
             >
-              <Globe className="w-4 h-4" />
+              <Globe className="w-4 h-4 text-indigo-500" />
               <span className="hidden sm:inline">{i18n.language === 'en' ? 'EN' : 'HI'}</span>
-            </button>
+            </motion.button>
 
             {/* Theme Toggle */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-all duration-300 group"
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all duration-300 group border border-slate-200/40 dark:border-slate-800/30"
               title="Toggle theme"
             >
               {isDark ? (
-                <Sun className="w-4 h-4 text-amber-500 group-hover:rotate-45 transition-transform" />
+                <Sun className="w-4 h-4 text-amber-500 group-hover:rotate-90 transition-transform duration-500" />
               ) : (
-                <Moon className="w-4 h-4 text-primary-600 group-hover:-rotate-12 transition-transform" />
+                <Moon className="w-4 h-4 text-indigo-600 group-hover:-rotate-45 transition-transform duration-500" />
               )}
-            </button>
+            </motion.button>
 
             {/* Notifications */}
             <div className="relative">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="p-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-all relative"
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all relative border border-slate-200/40 dark:border-slate-800/30"
               >
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              </button>
+                <Bell className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+              </motion.button>
 
               <AnimatePresence>
                 {showNotifications && (
@@ -207,16 +238,16 @@ export default function Layout() {
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-80 glass-card overflow-hidden z-50"
+                    className="absolute right-0 mt-3 w-80 glass-card overflow-hidden z-50 shadow-xl border border-slate-200/40 dark:border-slate-800/50"
                   >
-                    <div className="p-3 border-b border-surface-200/50 dark:border-surface-700/50">
-                      <p className="text-sm font-semibold">Notifications</p>
+                    <div className="p-3.5 border-b border-slate-200/40 dark:border-slate-800/40 bg-slate-50/50 dark:bg-slate-900/30">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Notifications</p>
                     </div>
                     <div className="max-h-64 overflow-y-auto">
                       {notifications.map(n => (
-                        <div key={n.id} className="p-3 border-b border-surface-100 dark:border-surface-700/50 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition cursor-pointer">
-                          <p className="text-sm">{n.text}</p>
-                          <p className="text-xs text-surface-400 mt-1">{n.time}</p>
+                        <div key={n.id} className="p-3.5 border-b border-slate-100 dark:border-slate-800/30 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10 transition cursor-pointer">
+                          <p className="text-sm text-slate-700 dark:text-slate-200 font-medium">{n.text}</p>
+                          <p className="text-[10px] text-surface-400 mt-1">{n.time}</p>
                         </div>
                       ))}
                     </div>
@@ -225,31 +256,33 @@ export default function Layout() {
               </AnimatePresence>
             </div>
 
-            {/* Avatar & Logout */}
-            <div className="flex items-center gap-2 ml-1">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+            {/* User Avatar & Logout */}
+            <div className="flex items-center gap-2 border-l border-slate-200/40 dark:border-slate-800/40 pl-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-indigo-500/10">
                 {mode === 'admin' ? 'A' : 'C'}
               </div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
                 title="Sign Out"
-                className="p-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                className="p-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/20"
               >
                 <LogOut className="w-4 h-4" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </header>
 
         {/* Page content with animated transitions */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-slate-50/30 dark:bg-slate-950/20">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
               <Outlet />
             </motion.div>

@@ -39,7 +39,6 @@ export default function Login() {
         localStorage.setItem('role', data.user.role);
         navigate('/dashboard');
       } else if (data.code === 'USER_NOT_FOUND') {
-        // Automatically redirect to signup and pass the email
         navigate('/signup', { state: { email } });
       } else {
         setError(data.error || 'Invalid credentials');
@@ -52,72 +51,89 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 relative overflow-hidden">
+      {/* Background Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[15%] left-[10%] w-72 h-72 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 blur-[100px] animate-drift" />
+        <div className="absolute bottom-[20%] right-[10%] w-96 h-96 rounded-full bg-teal-400/10 dark:bg-teal-500/15 blur-[120px] animate-drift-delay" />
+        <div className="absolute top-[40%] left-[45%] w-80 h-80 rounded-full bg-purple-500/5 dark:bg-purple-500/10 blur-[90px]" />
+      </div>
+
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
         className="w-full max-w-md"
       >
-        <div className="glass-card p-8 shadow-xl border-t-4 border-t-primary-500">
+        <div className="glass-card p-8 md:p-10 shadow-2xl border border-white/20 dark:border-slate-800/50">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow mb-4">
+            <motion.div 
+              whileHover={{ rotate: 15, scale: 1.05 }}
+              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-teal-400 flex items-center justify-center shadow-glow mb-4"
+            >
               <Shield className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold gradient-text">PolicyLens AI</h1>
-            <p className="text-sm text-surface-500 font-medium">Secure Portal Authentication</p>
+            </motion.div>
+            <h1 className="text-2xl md:text-3xl font-extrabold font-heading bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-500 bg-clip-text text-transparent">PolicyLens AI</h1>
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">Secure Portal Authentication</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-6">
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl text-sm text-red-600 dark:text-red-400 text-center font-medium">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-3.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-xl text-xs text-rose-600 dark:text-rose-400 text-center font-bold"
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
             
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider pl-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 <input 
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white/50 dark:bg-surface-900/50 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-sm"
                   placeholder="Enter your email"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider pl-1">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">Password</label>
+              <div className="relative group">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 <input 
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white/50 dark:bg-surface-900/50 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-sm"
                   placeholder="Enter your password"
                   required
                 />
               </div>
             </div>
 
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-500 hover:to-accent-500 text-white font-bold shadow-lg shadow-primary-500/30 transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 group disabled:opacity-75 disabled:cursor-not-allowed"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Secure Login'}
-              {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-            </button>
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Secure Access'}
+              {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+            </motion.button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-surface-200/50 dark:border-surface-700/50 text-center">
-            <p className="text-sm text-surface-500">
+          <div className="mt-8 pt-6 border-t border-slate-200/40 dark:border-slate-800/40 text-center">
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-semibold">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-semibold text-primary-600 dark:text-primary-400 hover:underline">
+              <Link to="/signup" className="text-indigo-500 hover:text-indigo-600 font-bold hover:underline transition-colors">
                 Sign up here
               </Link>
             </p>
